@@ -20,6 +20,7 @@ analyzeBtn.addEventListener('click', async () => {
         if (m.status === 'recognizing text') {
           status.textContent = `Analisi in corso: ${Math.round(m.progress * 100)}%`;
         }
+        console.log(m);
       }
     });
 
@@ -27,11 +28,11 @@ analyzeBtn.addEventListener('click', async () => {
     output.textContent = text;
     status.textContent = 'Analisi completata!';
 
-    // --- Importo principale sotto "Importo EUR" ---
-    const matches = [...text.matchAll(/Importo\s+Euro\s*([0-9]{1,3}[,\.][0-9]{2})/gi)];
+    // --- Importo: prendiamo l'ultimo "Totale ... EUR xx,xx" ---
+    const matches = [...text.matchAll(/Totale\s+EUR\s*(\d{1,3}[.,]\d{2})/gi)];
     if (matches.length > 0) {
       const lastMatch = matches[matches.length - 1][1];
-      amountEl.textContent = lastMatch.replace('.', ',') + ' €';
+      amountEl.textContent = lastMatch + ' €';
     } else {
       amountEl.textContent = 'Non trovato';
     }
