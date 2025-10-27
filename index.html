@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scontrini App</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Scontrini OCR</h1>
+
+    <!-- Input immagine -->
+    <input type="file" id="imageInput" accept="image/*">
+    <button id="analyzeBtn">Analizza</button>
+
+    <!-- Stato OCR -->
+    <p id="status"></p>
+
+    <!-- Risultati scontrino -->
+    <div id="result">
+      <div class="line">
+        <span>Totale</span>
+        <span id="amount">Non trovato</span>
+      </div>
+      <div class="line">
+        <span>Data</span>
+        <span id="date">Non trovata</span>
+      </div>
+    </div>
+
+    <!-- Output OCR raw per debug -->
+    <pre id="output"></pre>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
