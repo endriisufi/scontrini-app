@@ -1,38 +1,65 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lettore Scontrino</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>📄 Lettore Scontrini — Smart</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 <body>
-  <div class="container">
-    <h1 class="title">📄 Lettore Scontrino</h1>
-
-    <div class="upload-area">
-      <input type="file" id="imageInput" accept="image/*">
-      <button id="analyzeBtn">Analizza</button>
-      <button id="exportBtn">Esporta CSV</button>
-    </div>
-
-    <div id="status" class="status">In attesa di analisi...</div>
-
-    <div class="result glass">
-      <h2>Risultati</h2>
-      <div class="info">
-        <p><strong>Data:</strong> <span id="date">—</span></p>
-        <p><strong>Ora:</strong> <span id="time">—</span></p>
-        <p><strong>Importo:</strong> <span id="amount">—</span></p>
+  <main class="wrap">
+    <header class="header">
+      <div class="brand">
+        <div class="logo">📄</div>
+        <div>
+          <h1>Lettore Scontrini</h1>
+          <p class="tagline">Semplice. Pulito. Affidabile.</p>
+        </div>
       </div>
-    </div>
+    </header>
 
-    <div class="output glass">
+    <section class="card upload glass">
+      <label class="file-label">
+        <input type="file" id="imageInput" accept="image/*">
+        <span>Seleziona foto scontrino</span>
+      </label>
+
+      <div class="controls">
+        <button id="analyzeBtn" class="btn primary">🔎 Analizza OCR</button>
+        <button id="exportBtn" class="btn neutral">💾 Esporta CSV</button>
+      </div>
+
+      <div id="status" class="status">Pronto — carica uno scontrino per iniziare.</div>
+    </section>
+
+    <section class="card results glass">
+      <h2>Risultati</h2>
+      <div class="grid">
+        <div class="field"><small>📅 Data</small><div id="date" class="value">—</div></div>
+        <div class="field"><small>⏱️ Ora</small><div id="time" class="value">—</div></div>
+        <div class="field"><small>💶 Importo</small><div id="amount" class="value amount">—</div></div>
+      </div>
+    </section>
+
+    <section class="card ocr glass">
       <h3>Testo OCR</h3>
-      <pre id="output"></pre>
-    </div>
-  </div>
+      <pre id="output" class="ocr-text">Nessuna analisi eseguita.</pre>
+    </section>
+
+    <section class="card history glass">
+      <div class="history-header">
+        <h3>Storico letture</h3>
+        <button id="clearAllBtn" class="btn danger subtle">🧹 Pulisci tutto</button>
+      </div>
+      <div class="table-wrap">
+        <table id="dataTable" class="data-table" aria-live="polite"></table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden"></div>
 
   <script src="script.js"></script>
 </body>
