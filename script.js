@@ -95,9 +95,7 @@ analyzeBtn.addEventListener('click', async () => {
 
     if (lines.length >= 14){
       const line14 = lines[13];
-      // cerca data in formato 27-10-2025 o 27/10/2025 o 27.10.2025
       const dateMatch = line14.match(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b/);
-      // cerca ora in formato 17:33 o 17.33
       const timeMatch = line14.match(/\b\d{1,2}[:.]\d{2}\b/);
       if (dateMatch) currentData.date = dateMatch[0].replace(/\./g,'-');
       if (timeMatch) currentData.time = timeMatch[0].replace('.',':');
@@ -115,7 +113,6 @@ analyzeBtn.addEventListener('click', async () => {
     timeEl.textContent = currentData.time || '—';
     amountEl.textContent = currentData.amount || '—';
 
-    // salva solo se almeno data o amount ci sono
     if (currentData.date || currentData.amount){
       allData.push({...currentData});
       localStorage.setItem('scontrini', JSON.stringify(allData));
@@ -138,11 +135,8 @@ exportBtn.addEventListener('click', () => {
     alert('Nessun dato da esportare.');
     return;
   }
-  // CSV: racchiudiamo i campi tra virgolette per sicurezza (importo contiene virgola)
   const headers = ['Data','Ora','Importo'];
-  const rows = allData.map(r => {
-    return `"${r.date}","${r.time}","${r.amount}"`;
-  });
+  const rows = allData.map(r => `"${r.date}","${r.time}","${r.amount}"`);
   const csv = [headers.join(',')].concat(rows).join('\n');
 
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });

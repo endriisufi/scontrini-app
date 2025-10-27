@@ -1,4 +1,4 @@
-/* Font system + base */
+/* Variabili e base */
 :root{
   --accent: #007aff;
   --bg1: linear-gradient(135deg,#eef3fb 0%, #ffffff 100%);
@@ -22,10 +22,7 @@ body{
 }
 
 /* main wrapper */
-.wrap{
-  width:100%;
-  max-width:760px;
-}
+.wrap{width:100%;max-width:760px}
 
 /* header */
 .header{display:flex;align-items:center;margin-bottom:18px}
@@ -75,9 +72,9 @@ body{
 .status{margin-top:10px;color:var(--muted);text-align:center;font-size:13px}
 
 /* results grid */
-.results .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+#resultsGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .field{padding:10px;border-radius:10px;background:rgba(255,255,255,0.7);text-align:center}
-.field.wide{grid-column:span 3}
+.field.wide{grid-column:span 2}
 .field small{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}
 .value{font-weight:700;font-size:16px}
 .value.amount{font-size:18px;color:#0b7a3f}
@@ -87,7 +84,7 @@ body{
   margin:0;
   background:rgba(250,250,250,0.6);
   padding:12px;border-radius:10px;
-  max-height:200px;overflow:auto;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+  max-height:180px;overflow:auto;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
   font-size:13px;color:#222;
 }
 
@@ -95,20 +92,26 @@ body{
 .history-header{display:flex;justify-content:space-between;align-items:center}
 .table-wrap{margin-top:10px}
 .data-table{width:100%;border-collapse:collapse;font-size:14px}
-.data-table th,.data-table td{padding:8px;border-bottom:1px solid rgba(10,10,10,0.04);text-align:center}
+.data-table th,.data-table td{padding:6px;border-bottom:1px solid rgba(10,10,10,0.04);text-align:center}
 .data-table th{font-weight:700;background:rgba(0,122,255,0.06);color:#0b1220}
 .delete-btn{background:#ff3b30;color:white;padding:6px 8px;border-radius:8px;border:none;cursor:pointer}
 .delete-btn:hover{filter:brightness(.95)}
 
 /* toast */
 .toast{
-  position:fixed;right:20px;bottom:22px;padding:10px 14px;border-radius:10px;background:#111;color:white;box-shadow:0 8px 20px rgba(0,0,0,0.25);opacity:0;transform:translateY(8px);transition:opacity .18s,transform .18s
+  position:fixed;right:12px;bottom:12px;padding:8px 12px;border-radius:10px;background:#111;color:white;box-shadow:0 8px 20px rgba(0,0,0,0.25);opacity:0;transform:translateY(8px);transition:opacity .18s,transform .18s
 }
 .toast.show{opacity:1;transform:translateY(0)}
 .toast.hidden{display:none}
 
 /* responsive */
-@media (max-width:520px){
-  .results .grid{grid-template-columns:1fr 1fr}
-  .field.wide{grid-column:span 2}
+@media (max-width:480px){
+  .card{padding:12px;margin-bottom:12px}
+  .field{padding:8px}
+  .value{font-size:14px}
+  .value.amount{font-size:16px}
+  .btn{width:100%;padding:8px 0;font-size:14px}
+  .ocr-text{max-height:180px;font-size:12px}
+  .data-table th,.data-table td{padding:6px;font-size:12px}
+  .history-header h3{font-size:16px}
 }
