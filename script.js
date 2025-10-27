@@ -1,4 +1,3 @@
-
 const imageInput = document.getElementById('imageInput');
 const analyzeBtn = document.getElementById('analyzeBtn');
 const exportBtn = document.getElementById('exportBtn');
@@ -8,7 +7,8 @@ const amountEl = document.getElementById('amount');
 const dateEl = document.getElementById('date');
 const timeEl = document.getElementById('time');
 
-let currentData = { date: '', time: '', amount: '' }; // serve per CSV
+let allData = JSON.parse(localStorage.getItem('scontrini')) || [];
+let currentData = { date: '', time: '', amount: '' };
 
 analyzeBtn.addEventListener('click', async () => {
   if (!imageInput.files[0]) {
@@ -37,7 +37,6 @@ analyzeBtn.addEventListener('click', async () => {
     // --- Riga 14: data e ora separate ---
     if (lines.length >= 14) {
       const line14 = lines[13];
-      // proviamo a prendere la data e l'ora usando regex
       const dateMatch = line14.match(/\d{1,2}-\d{1,2}-\d{4}/);
       const timeMatch = line14.match(/\d{1,2}[:]\d{2}/);
       currentData.date = dateMatch ? dateMatch[0] : '';
@@ -45,10 +44,10 @@ analyzeBtn.addEventListener('click', async () => {
       dateEl.textContent = currentData.date || '—';
       timeEl.textContent = currentData.time || '—';
     } else {
-      dateEl.textContent = '—';
-      timeEl.textContent = '—';
       currentData.date = '';
       currentData.time = '';
+      dateEl.textContent = '—';
+      timeEl.textContent = '—';
     }
 
     // --- Riga 22: importo ---
@@ -58,8 +57,14 @@ analyzeBtn.addEventListener('click', async () => {
       currentData.amount = matchAmount ? matchAmount[1].replace('.', ',') + ' €' : '';
       amountEl.textContent = currentData.amount || '—';
     } else {
-      amountEl.textContent = '—';
       currentData.amount = '';
+      amountEl.textContent = '—';
+    }
+
+    // --- Aggiungi dati a lista accumulativa ---
+    if (currentData.date && currentData.amount) {
+      allData.push({ ...currentData });
+      localStorage.setItem('scontrini', JSON.stringify(allData));
     }
 
   } catch (err) {
@@ -68,26 +73,26 @@ analyzeBtn.addEventListener('click', async () => {
   }
 });
 
-// --- Esporta CSV ---
+// --- Esporta CSV accumulativo ---
 exportBtn.addEventListener('click', () => {
-  if (!currentData.date || !currentData.amount) {
+  if (allData.length === 0) {
     alert('Nessun dato disponibile da esportare!');
     return;
   }
 
   const headers = ['Data', 'Ora', 'Importo'];
-  const values = [currentData.date, currentData.time, currentData.amount];
-  const csvContent = headers.join(',') + '\n' + values.join(',');
+  const rows = allData.map(d => [d.date, d.time, d.amount].join(','));
+  const csvContent = headers.join(',') + '\n' + rows.join('\n');
 
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
   const url = URL.createObjectURL(blob);
   link.setAttribute('href', url);
-  link.setAttribute('download', 'scontrino.csv');
+  link.setAttribute('download', 'scontrini.csv');
   link.style.display = 'none';
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
 
-  status.textContent = 'File CSV generato ✅';
+  status.textContent = 'File CSV accumulativo generato ✅';
 });
