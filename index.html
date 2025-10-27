@@ -3,35 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Scontrini App</title>
+  <title>Lettore Scontrino</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 <body>
   <div class="container">
-    <h1>Scontrini OCR</h1>
+    <h1 class="title">📄 Lettore Scontrino</h1>
 
-    <!-- Input immagine -->
-    <input type="file" id="imageInput" accept="image/*">
-    <button id="analyzeBtn">Analizza</button>
+    <div class="upload-area">
+      <input type="file" id="imageInput" accept="image/*">
+      <button id="analyzeBtn">Analizza</button>
+    </div>
 
-    <!-- Stato OCR -->
-    <p id="status"></p>
+    <div id="status" class="status">In attesa di analisi...</div>
 
-    <!-- Risultati scontrino -->
-    <div id="result">
-      <div class="line">
-        <span>Totale</span>
-        <span id="amount">Non trovato</span>
-      </div>
-      <div class="line">
-        <span>Data</span>
-        <span id="date">Non trovata</span>
+    <div class="result glass">
+      <h2>Risultati</h2>
+      <div class="info">
+        <p><strong>Data:</strong> <span id="date">—</span></p>
+        <p><strong>Ora:</strong> <span id="time">—</span></p>
+        <p><strong>Importo:</strong> <span id="amount">—</span></p>
       </div>
     </div>
 
-    <!-- Output OCR raw per debug -->
-    <pre id="output"></pre>
+    <div class="output glass">
+      <h3>Testo OCR</h3>
+      <pre id="output"></pre>
+    </div>
   </div>
 
   <script src="script.js"></script>
