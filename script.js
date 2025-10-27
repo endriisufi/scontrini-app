@@ -8,11 +8,12 @@ const output      = document.getElementById('output');
 const amountEl    = document.getElementById('amount');
 const dateEl      = document.getElementById('date');
 const timeEl      = document.getElementById('time');
+const fuelEl      = document.getElementById('fuelPrice'); // nuovo elemento per prezzo benzina
 const tableEl     = document.getElementById('dataTable');
 const toast       = document.getElementById('toast');
 
 let allData = JSON.parse(localStorage.getItem('scontrini')) || [];
-let currentData = { date:'', time:'', amount:'' };
+let currentData = { date:'', time:'', amount:'', fuelPrice:'' };
 
 // helper toast
 function showToast(msg, ms = 2200){
@@ -29,12 +30,12 @@ function showToast(msg, ms = 2200){
 function updateTable(){
   tableEl.innerHTML = '';
   if (allData.length === 0){
-    tableEl.innerHTML = '<tr><td colspan="4">Nessun scontrino registrato.</td></tr>';
+    tableEl.innerHTML = '<tr><td colspan="5">Nessun scontrino registrato.</td></tr>';
     return;
   }
   // header
   const header = document.createElement('tr');
-  header.innerHTML = `<th>Data</th><th>Ora</th><th>Importo</th><th>Azioni</th>`;
+  header.innerHTML = `<th>Data</th><th>Ora</th><th>Importo</th><th>Benzina</th><th>Azioni</th>`;
   tableEl.appendChild(header);
 
   allData.forEach((item, idx) => {
@@ -42,6 +43,7 @@ function updateTable(){
     tr.innerHTML = `<td>${item.date||'—'}</td>
                     <td>${item.time||'—'}</td>
                     <td>${item.amount||'—'}</td>
+                    <td>${item.fuelPrice||'—'}</td>
                     <td><button class="delete-btn" data-i="${idx}">🗑️ Elimina</button></td>`;
     tableEl.appendChild(tr);
   });
@@ -85,14 +87,12 @@ analyzeBtn.addEventListener('click', async () => {
     status.textContent = 'Analisi completata';
     showToast('OCR completato');
 
-    // split in righe non vuote
     const lines = text.split('\n').map(l=>l.trim()).filter(l=>l.length>0);
 
-    // riga 14 -> data e ora (se presenti)
-    currentData.date = '';
-    currentData.time = '';
-    currentData.amount = '';
+    // reset dati correnti
+    currentData = { date:'', time:'', amount:'', fuelPrice:'' };
 
+    // linea 14 -> data e ora
     if (lines.length >= 14){
       const line14 = lines[13];
       const dateMatch = line14.match(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b/);
@@ -101,18 +101,27 @@ analyzeBtn.addEventListener('click', async () => {
       if (timeMatch) currentData.time = timeMatch[0].replace('.',':');
     }
 
-    // riga 22 -> importo
+    // linea 22 -> importo totale
     if (lines.length >= 22){
       const line22 = lines[21];
       const matchAmount = line22.match(/EURO?\s*([0-9]{1,3}[.,][0-9]{2})/i);
       if (matchAmount) currentData.amount = matchAmount[1].replace('.',',') + ' €';
     }
 
-    // Aggiorna UI
+    // quart'ultima riga -> prezzo benzina
+    if (lines.length >= 4){
+      const fuelLine = lines[lines.length - 4];
+      const fuelMatch = fuelLine.match(/([0-9]{1,3}[.,][0-9]{2})/);
+      if (fuelMatch) currentData.fuelPrice = fuelMatch[1].replace('.',',') + ' €';
+    }
+
+    // aggiorna UI
     dateEl.textContent = currentData.date || '—';
     timeEl.textContent = currentData.time || '—';
     amountEl.textContent = currentData.amount || '—';
+    fuelEl.textContent = currentData.fuelPrice || '—';
 
+    // salva se almeno data o importo presenti
     if (currentData.date || currentData.amount){
       allData.push({...currentData});
       localStorage.setItem('scontrini', JSON.stringify(allData));
@@ -129,14 +138,14 @@ analyzeBtn.addEventListener('click', async () => {
   }
 });
 
-// esporta CSV accumulativo
+// esporta CSV accumulativo (incluso prezzo benzina)
 exportBtn.addEventListener('click', () => {
   if (allData.length === 0){
     alert('Nessun dato da esportare.');
     return;
   }
-  const headers = ['Data','Ora','Importo'];
-  const rows = allData.map(r => `"${r.date}","${r.time}","${r.amount}"`);
+  const headers = ['Data','Ora','Importo','Prezzo Benzina'];
+  const rows = allData.map(r => `"${r.date}","${r.time}","${r.amount}","${r.fuelPrice}"`);
   const csv = [headers.join(',')].concat(rows).join('\n');
 
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
